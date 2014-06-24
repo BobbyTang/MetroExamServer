@@ -6,11 +6,16 @@
 <title>地铁概论通用模块</title>
 
 <!--JQUERY UI  -->
+<!--
 <link href="js/plugs/jquery/jquery-ui-1.9.0.custom/css/mycss/jquery-ui-1.9.2.custom.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="js/plugs/jquery/jquery-ui-1.9.0.custom/js/jquery-1.8.2.js"></script>
 <script type="text/javascript" src="js/plugs/jquery/jquery-ui-1.9.0.custom/js/jquery-ui-1.9.0.custom.js"></script>
 <script type="text/javascript" src="js/plugs/jquery/jquery.cookie.js"></script>
-<!--  -->
+-->
+<link href="js/plugs/jquery/jquery-ui-1.10.4/css/base/jquery.ui.all.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="js/plugs/jquery/jquery-ui-1.10.4/js/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="js/plugs/jquery/jquery-ui-1.10.4/js/jquery-ui-1.10.4.js"></script>
+
 <script type="text/javascript" src="js/plugs/ckeditor/ckeditor.js"></script>
 
 <link href="js/plugs/validate/jquery.validate.css" type="text/css" rel="stylesheet" />
@@ -123,9 +128,19 @@ body,.content-list {
 					</p>
 					<div style="clear: both;"></div>
 				</div>
+				<div id="dialog-form" title="请输入您的信息:">
+					<p class="validateTips"></p>
+
+					<label for="national_id">身份证号码</label>
+					<input type="text" name="national_id" id="national_id" class="text ui-widget-content ui-corner-all" size="30"/>
+
+				</div>
 				<div class="button-body-btn" align="right">
-					单选题数量: <input type="text" value="20" id="singleCount" onkeyup="validateAndCheck('S')"/>
-					多选题数量: <input type="text" value="10" id="multipleCount" onkeyup="validateAndCheck('M')"/>
+					<input type="button" value="登录" class="btn001" id="loginButton"/>
+				</div>
+				<div class="button-body-btn" align="right" style="display:none">
+					单选题数量: <input type="text" value="40" id="singleCount" onkeyup="validateAndCheck('S')"/>
+					多选题数量: <input type="text" value="30" id="multipleCount" onkeyup="validateAndCheck('M')"/>
 					<input type="button" value="重置题目" class="btn001" id="refreshQuest" onclick="refresh_quest()"/>
 				</div>
 				<div id="score_area">

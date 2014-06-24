@@ -254,9 +254,76 @@ function execLoadElement(){
 	returnToTop();
 }
 
+function initalLoginFunc () {
+	var national_id = $( "#national_id" ),
+		allFields = $( [] ).add( name ),
+		tips = $( ".validateTips" );
+
+	function updateTips( t ) {
+		tips
+			.text( t )
+			.addClass( "ui-state-highlight" );
+		setTimeout(function() {
+			tips.removeClass( "ui-state-highlight", 1500 );
+		}, 500 );
+	}
+
+	function checkLength( o, n, min, max ) {
+		if ( o.val().length > max || o.val().length < min ) {
+			o.addClass( "ui-state-error" );
+			updateTips( n + "的长度必须在" +
+				min + "到" + max + "之间." );
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	$( "#dialog-form" ).dialog({
+		autoOpen: false,
+		height: 250,
+		width: 400,
+		modal: true,
+		buttons: {
+			"确定": function() {
+				var bValid = true;
+				allFields.removeClass( "ui-state-error" );
+
+				bValid = bValid && checkLength( national_id, "身份证号码", 18, 18);
+				
+				//bValid = bValid && checkRegexp( name, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
+
+				if ( bValid ) {
+					alert('');
+					
+					//ajax
+					
+					
+					
+					$( "#users tbody" ).append( "<tr>" +
+						"<td>" + name.val() + "</td>" +
+						"<td>" + email.val() + "</td>" +
+						"<td>" + password.val() + "</td>" +
+					"</tr>" );
+					$( this ).dialog( "close" );
+				}
+			},
+			"取消": function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			allFields.val( "" ).removeClass( "ui-state-error" );
+		}
+	});
+	
+	$( "#loginButton" ).click(function() {
+		$( "#dialog-form" ).dialog( "open" );
+	});
+}
+
 $(document).ready(
 		function() {
-			
 			function readTextFile(quest_type) {
 				var rawTxt = "";
 				if(quest_type == 'S'){
@@ -300,7 +367,8 @@ $(document).ready(
 			readTextFile("S");
 			readTextFile("M");
 			execLoadElement();
-		});
-
-
+			initalLoginFunc();
+			
+		}
+);
 
