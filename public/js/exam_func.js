@@ -3,6 +3,8 @@ var resultList = new Array();
 var singleQuestIdx = -1;
 var multiQuestIdx = 0;
 var generateIdList = new Array();
+var currentPage = 1;
+var pageIntervel = 10;
 
 function refresh_quest(){
 	//document.location.reload();
@@ -78,6 +80,7 @@ function transformAnswer(answerLetter, type){
 	}
 }
 
+
 function collect_result(){
 	var check_answer_array = new Array();
 	var singleCountNum = $("#singleCount").val();
@@ -136,13 +139,17 @@ function collect_result(){
 			var type = value.type;
 			//alert(value.quest_idx + "=" + value.type + "=" + value.answer_idx + "=" + value.unchecked_idx);
 			if(transformAnswer(correct_answer_letter,type) != value.answer_idx || value.unchecked_idx == '0123'){
+				/* commet this because there is no need to show answer in formal exam
 				$("#hint_"+quest_idx).css("color","red")
 				$("#hint_"+quest_idx).html("错误, 正确答案为:" + correct_answer_letter);
 				$("#hint_"+quest_idx).show();
+				*/
 			}else {
+				/* commet this because there is no need to show answer in formal exam
 				$("#hint_"+quest_idx).css("color","green")
 				$("#hint_"+quest_idx).html("正确.");
 				$("#hint_"+quest_idx).show();
+				*/
 				//calculate score
 				if(type == 'S'){
 					score += (60/singleCountNum); 
@@ -155,14 +162,18 @@ function collect_result(){
 	
 	score = Math.ceil(score);
 	
-	$("#score_area").html("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; >>>> 您的得分为:" + score);
+	return score;
+	
+	
+	/*$("#score_area").html("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; >>>> 您的得分为:" + score);
 	if(score >= 60){
 		$("#score_area").css("color","green");
 	}else {
 		$("#score_area").css("color","red");
 	}
+	*/
 	
-	returnToTop();
+	//returnToTop();
 }
 
 function returnToTop(){
@@ -172,7 +183,7 @@ function returnToTop(){
 function fillHTML(quest,seriesid){
 	var questStrLine = "";
 		
-	questStrLine += "<div class='r-qu-body'>";
+	questStrLine += "<div class='r-qu-body' id='quItemArea_" + (seriesid + 1) + "'>";
 	questStrLine += "<div class='r-qu-body-title'>";
 	if(quest.type == 'S'){
 		questStrLine += "" + (seriesid + 1) + "、<p>"+quest.content+"</p>[单选题]";
@@ -209,6 +220,40 @@ function fillHTML(quest,seriesid){
 	$("#quest_content_id").append(questStrLine);
 }
 
+function selectCurrentPageItem(){
+	var singleCountNum = parseInt($("#singleCount").val(), 10);
+	var multipleCountNum = parseInt($("#multipleCount").val(), 10);
+	var sumCountNum = singleCountNum + multipleCountNum;
+	for(var i=1; i<=sumCountNum; i++) {
+		if(i <= currentPage*pageIntervel && i >= ((currentPage - 1)*10 + 1)) {
+			$("#quItemArea_" + i).show();
+		}else {
+			$("#quItemArea_" + i).hide();
+		}
+
+	}
+}
+
+function movePage(offset) {
+	currentPage = currentPage + offset;
+	selectCurrentPageItem();
+	
+	var singleCountNum = parseInt($("#singleCount").val(), 10);
+	var multipleCountNum = parseInt($("#multipleCount").val(), 10);
+	var sumCountNum = singleCountNum + multipleCountNum;
+
+	
+	if(currentPage <= 1){
+		$("#previousPage").hide();
+	}else if(currentPage >= (sumCountNum/pageIntervel)){
+		$("#nextPage").hide();
+	}else {
+		$("#previousPage").show();
+		$("#nextPage").show();
+	}
+	
+	returnToTop();
+}
 /**
  * Returns a random integer between min and max
  * Using Math.round() will give you a non-uniform distribution!
@@ -255,7 +300,7 @@ function execLoadElement(){
 }
 
 function initalLoginFunc () {
-	var national_id = $( "#national_id" ),
+	var nationalid = $("#nationalid"),
 		allFields = $( [] ).add( name ),
 		tips = $( ".validateTips" );
 
@@ -279,7 +324,7 @@ function initalLoginFunc () {
 		}
 	}
 	
-	$( "#dialog-form" ).dialog({
+	$( "#login-dialog-form" ).dialog({
 		autoOpen: false,
 		height: 250,
 		width: 400,
@@ -289,22 +334,27 @@ function initalLoginFunc () {
 				var bValid = true;
 				allFields.removeClass( "ui-state-error" );
 
-				bValid = bValid && checkLength( national_id, "身份证号码", 18, 18);
+				bValid = bValid && checkLength( nationalid, "身份证号码", 18, 18);
 				
 				//bValid = bValid && checkRegexp( name, /^[a-z]([0-9a-z_])+$/i, "Username may consist of a-z, 0-9, underscores, begin with a letter." );
 
+				
 				if ( bValid ) {
-					alert('');
+
+					$.ajax({
+					  type: "POST",
+					  url: "signin",
+					  data: {"nationalid":nationalid.val()},
+					  success: function(data) {
+							if(data.employeename) {
+								$("#employee_info_area").html(data.employeename);
+								$("#loginButton").hide();
+								$("#logoutButton").show();
+							}
+					  },
+					  dataType: "json"
+					});
 					
-					//ajax
-					
-					
-					
-					$( "#users tbody" ).append( "<tr>" +
-						"<td>" + name.val() + "</td>" +
-						"<td>" + email.val() + "</td>" +
-						"<td>" + password.val() + "</td>" +
-					"</tr>" );
 					$( this ).dialog( "close" );
 				}
 			},
@@ -318,7 +368,66 @@ function initalLoginFunc () {
 	});
 	
 	$( "#loginButton" ).click(function() {
-		$( "#dialog-form" ).dialog( "open" );
+		$( "#login-dialog-form" ).dialog( "open" );
+	});
+	
+	$( "#logoutButton" ).click(function() {
+		
+		$.ajax({
+		  type: "POST",
+		  url: "signout",
+		  success: function(data) {
+				$("#employee_info_area").html("");
+				$("#loginButton").show();
+				$("#logoutButton").hide();
+		  },
+		  dataType: "json"
+		});
+		
+	});
+	
+	//submit function
+	$( "#submit-dialog-confirm" ).dialog({
+		autoOpen: false,
+		//height:140,
+		modal: true,
+		buttons: {
+			"确认并提交": function() {
+				var score;
+				var leaveFlag = false;
+				score = collect_result();
+				
+				$.ajax({
+				  type: "POST",
+				  url: "submitResult",
+					data: {score:score},
+				  success: function(data) {
+						if(data.submitStatus == 'success'){
+							leaveFlag = true;
+							
+							if(leaveFlag){
+								alert('提交成功,自动退出!');
+								//hacky way to close
+								open("/", '_self').close();
+							}
+											
+						}
+						
+				  },
+				  dataType: "json"
+				});
+				
+				$( this ).dialog( "close" );
+				
+			},
+			"取消": function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+	
+	$( "#subSurveyAnswer" ).click(function() {
+		$( "#submit-dialog-confirm" ).dialog( "open" );
 	});
 }
 
@@ -368,6 +477,8 @@ $(document).ready(
 			readTextFile("M");
 			execLoadElement();
 			initalLoginFunc();
+			selectCurrentPageItem();
+			movePage(0);
 			
 		}
 );

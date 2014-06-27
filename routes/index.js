@@ -9,48 +9,63 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Express' });
 });
 
-router.post('/validate', function(req, res) {
+router.post('/signin', function(req, res) {
   var nationalid = req.param('nationalid', '310115198701014321');
 
   logger.info('request nationalid = ' + nationalid);
   var params = [];
   params.push(nationalid);
 
-  dbutils.executeQuery('select * from employee_tbl where nationalid = ?', params, function(err, result){
+  dbutils.executeQuery("select * from employee_tbl where nationalid = ? and flag = 'Y'", params, function(err, result) {
     //query from DB
     if (row = result[0]) {
+      if(req.session.loginFlag === undefined){
+        logger.info('create session.nationalid:' + nationalid)
+        req.session.loginFlag = true;
+        req.session.nationalid = nationalid;
+        req.session.employeename = row.employeename;
+        req.session.employeeid = row.employeeid;
+        req.session.groupid = row.groupid;
+        req.session.lineid = row.lineid;
+      }
+      logger.info('Attempt to return employee[nationalid=' + nationalid  + '] json info data.');
       res.json({
         employeename: row.employeename,
         employeeid: row.employeeid,
         groupid: row.groupid,
         lineid: row.lineid,
-      })
+      });
+    }else {
+      logger.warn('Can not find nationalid = ' + nationalid);
+      res.json({error:'true'});
     }
   });
 
 });
 
-router.post('/signin', function(req, res) {
-  var national_id = req.param('national_id', '310115198701014321');
-
-  if(!req.session.loginFlag){
-    logger.info('create session.national_id:' + national_id)
-    req.session.loginFlag = true;
-    req.session.national_id = national_id;
-  }
-
-  logger.info('Print session.national_id:' + national_id);
-
-
-  res.send(200);
-});
-
 router.post('/signout', function(req, res) {
-  logger.info('signout');
+  logger.info('Try to signout, nationalid = ' + req.session.nationalid);
+  req.session.destroy(function(err) {
+    if (err)
+      logger.error(err);
+      res.json({error:'true'});
+  })
+  logger.info('Signout successfully.')
+  res.json({});
 });
 
 router.post('/submitResult', function(req, res) {
-  logger.info('submitResult');
+  var score = req.param('score');
+  var nationalid = req.session.nationalid;
+  var params = [];
+  params.push(nationalid);
+  params.push(score);
+  params.push(null);
+  if(score) {
+    dbutils.executeInsert('insert into exam_score_record_tbl(nationalid,score,elapsed_ts) values(?,?,?)', params);
+  }
+  logger.info('Attempt to return submit info.');
+  res.json({submitStatus: 'success'});
 });
 
 module.exports = router;

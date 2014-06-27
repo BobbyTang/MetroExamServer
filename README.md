@@ -26,5 +26,16 @@ create table employee_tbl(
 );
 
 insert into employee_tbl values('310115198701014321','56789','zhangjy','4001','line 4','add_desc','Y');
+
+create table exam_score_record_tbl(
+  id int primary key auto_increment,
+	nationalid varchar(20) not null,
+	score float,
+	elapsed_ts timestamp,
+	attended_ts timestamp default current_timestamp
+);
 ```
 ##Express Node Server
+```
+curl --data "nationalid=1111" http://localhost:3000/signin
+```

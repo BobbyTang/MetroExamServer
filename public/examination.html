@@ -128,15 +128,22 @@ body,.content-list {
 					</p>
 					<div style="clear: both;"></div>
 				</div>
-				<div id="dialog-form" title="请输入您的信息:">
+				<div id="login-dialog-form" title="请输入您的信息:">
 					<p class="validateTips"></p>
 
-					<label for="national_id">身份证号码</label>
-					<input type="text" name="national_id" id="national_id" class="text ui-widget-content ui-corner-all" size="30"/>
+					<label for="nationalid">身份证号码</label>
+					<input type="text" name="nationalid" id="nationalid" class="text ui-widget-content ui-corner-all" size="30"/>
 
 				</div>
+				
+				<div id="submit-dialog-confirm" title="确定要提交吗?">
+					<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>请选择确定,并检查后提交试卷.</p>
+				</div>
+				
 				<div class="button-body-btn" align="right">
+					<span id="employee_info_area" style="text-align:right"></span>
 					<input type="button" value="登录" class="btn001" id="loginButton"/>
+					<input type="button" value="退出" class="btn001" id="logoutButton" style="display: none"/>
 				</div>
 				<div class="button-body-btn" align="right" style="display:none">
 					单选题数量: <input type="text" value="40" id="singleCount" onkeyup="validateAndCheck('S')"/>
@@ -210,8 +217,14 @@ body,.content-list {
 					 -->
 				</div>
 
-				<div class="button-body-btn">
-					<input type="button" value="提交" class="btn001" id="subSurveyAnswer" onclick="collect_result()"/>
+				<div class="button-body-btn" style="height: 50px">
+						<span style="float: left">
+							<input type="button" value="上一页" class="btn001" id="previousPage" onclick="movePage(-1)"/>
+							<input type="button" value="下一页" class="btn001" id="nextPage" onclick="movePage(1)"/>
+						</span>
+						<span style="float: right">
+							<input type="button" value="提交" class="btn001" id="subSurveyAnswer"/>
+						</span>
 				</div>
 			</form>
 		</div>
