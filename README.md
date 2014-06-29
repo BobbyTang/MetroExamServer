@@ -2,10 +2,16 @@ MetroExamServer
 =========
 ##MySQL
 ```
+linux version:
 /usr/local/Cellar/mysql/5.6.10/bin/mysqld
 /usr/local/Cellar/mysql/5.6.10/support-files/mysql.server start
 /usr/local/Cellar/mysql/5.6.10/support-files/mysql.server stop
 mysql -h localhost --auto-rehash -p -u root
+
+win version:
+mysqld.exe
+cmd
+mysql.exe -h localhost --auto-rehash -p -u root
 
 ```
 
@@ -27,6 +33,11 @@ create table employee_tbl(
 
 insert into employee_tbl values('310115198701014321','56789','zhangjy','4001','line 4','add_desc','Y');
 
+-- clear all data in the table
+truncate table employee_tbl;
+-- check employee information
+select * from employee_tbl;
+
 create table exam_score_record_tbl(
   id int primary key auto_increment,
 	nationalid varchar(20) not null,
@@ -44,7 +55,8 @@ static html: MetroExamServer/public/examination.html
 static js: public/js/exam_func.js
 
 ```
-node bin/www
+cd MetroExamServer
+node.exe bin/www
 
 http://localhost:3000/examination.html
 
