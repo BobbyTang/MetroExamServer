@@ -152,9 +152,9 @@ function collect_result(){
 				*/
 				//calculate score
 				if(type == 'S'){
-					score += (60/singleCountNum); 
+					score += (40/singleCountNum); 
 				}else if(type == 'M'){
-					score += (40/multipleCountNum); 
+					score += (60/multipleCountNum); 
 				}
 			}
 		}

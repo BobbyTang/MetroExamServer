@@ -34,8 +34,19 @@ create table exam_score_record_tbl(
 	elapsed_ts timestamp,
 	attended_ts timestamp default current_timestamp
 );
+
+select b.employeename, b.groupid, a.score, a.attended_ts from exam_score_record_tbl a, employee_tbl b where a.nationalid = b.nationalid order by a.score asc;
+
 ```
 ##Express Node Server
+static html: MetroExamServer/public/examination.html
+
+static js: public/js/exam_func.js
+
 ```
+node bin/www
+
+http://localhost:3000/examination.html
+
 curl --data "nationalid=1111" http://localhost:3000/signin
 ```
