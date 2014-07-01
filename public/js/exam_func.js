@@ -348,8 +348,12 @@ function initalLoginFunc () {
 					  success: function(data) {
 							if(data.employeename) {
 								$("#employee_info_area").html(data.employeename);
-								$("#loginButton").hide();
-								$("#logoutButton").show();
+
+								postLoadElementFunc();
+								
+								toggleButtonFunc('signin');
+							}else if(data.status == 'error') {
+								$("#employee_info_area").html(data.errorMsg);
 							}
 					  },
 					  dataType: "json"
@@ -378,8 +382,13 @@ function initalLoginFunc () {
 		  url: "signout",
 		  success: function(data) {
 				$("#employee_info_area").html("");
-				$("#loginButton").show();
-				$("#logoutButton").hide();
+				
+				toggleButtonFunc('signout');
+				
+				alert('登出成功,自动退出!');
+				//hacky way to close
+				open("/", '_self').close();
+				
 		  },
 		  dataType: "json"
 		});
@@ -402,7 +411,7 @@ function initalLoginFunc () {
 				  url: "submitResult",
 					data: {score:score},
 				  success: function(data) {
-						if(data.submitStatus == 'success'){
+						if(data.status == 'success'){
 							leaveFlag = true;
 							
 							if(leaveFlag){
@@ -411,6 +420,8 @@ function initalLoginFunc () {
 								open("/", '_self').close();
 							}
 											
+						}else if(data.status == 'error'){
+							alert(data.errorMsg);
 						}
 						
 				  },
@@ -431,55 +442,80 @@ function initalLoginFunc () {
 	});
 }
 
-$(document).ready(
-		function() {
-			function readTextFile(quest_type) {
-				var rawTxt = "";
-				if(quest_type == 'S'){
-					rawTxt = loadSingleQuestFunc();
-				}else if(quest_type == 'M') {
-					rawTxt = loadMultipleQuestFunc();
-				}
-				var line = rawTxt.split('$');
-				$.each(line, function(index, value) {
-					var items = value.split('|');
-					var quest = new Object();
-					quest.idx = questList.length;
-					quest.type = items[0];
-					quest.content = items[1];
-					quest.answer = items[2];
-					
-					var optionList = new Array();
-					
-					optionList.push(items[3]);
-					optionList.push(items[4]);
-					optionList.push(items[5]);
-					optionList.push(items[6]);
-					
-					quest.optionList = optionList;
-					
-					questList.push(quest);
-					
-					if(quest_type == 'S'){
-						singleQuestIdx++;
-					}else if (quest_type == 'M'){
-						if(multiQuestIdx == 0) {
-							multiQuestIdx = singleQuestIdx + 1;
-						}else {
-							multiQuestIdx++;
-						}
-					}
-				});
+function toggleButtonFunc(sign_status) {
+	if(sign_status == 'signin'){
+	  $("#loginButton").hide();
+	  $("#logoutButton").show();
+	  $("#previousPage").show();
+	  $("#nextPage").show();
+	  $("#subSurveyAnswer").show();
+	}else if(sign_status == 'signout'){
+	  $("#loginButton").show();
+	  $("#logoutButton").hide();
+	  $("#previousPage").hide();
+	  $("#nextPage").hide();
+	  $("#subSurveyAnswer").hide();
+	}
+	  
+}
 
+function readTextFile(quest_type) {
+	var rawTxt = "";
+	if(quest_type == 'S'){
+		rawTxt = loadSingleQuestFunc();
+	}else if(quest_type == 'M') {
+		rawTxt = loadMultipleQuestFunc();
+	}
+	var line = rawTxt.split('$');
+	$.each(line, function(index, value) {
+		var items = value.split('|');
+		var quest = new Object();
+		quest.idx = questList.length;
+		quest.type = items[0];
+		quest.content = items[1];
+		quest.answer = items[2];
+		
+		var optionList = new Array();
+		
+		optionList.push(items[3]);
+		optionList.push(items[4]);
+		optionList.push(items[5]);
+		optionList.push(items[6]);
+		
+		quest.optionList = optionList;
+		
+		questList.push(quest);
+		
+		if(quest_type == 'S'){
+			singleQuestIdx++;
+		}else if (quest_type == 'M'){
+			if(multiQuestIdx == 0) {
+				multiQuestIdx = singleQuestIdx + 1;
+			}else {
+				multiQuestIdx++;
 			}
-			
-			readTextFile("S");
-			readTextFile("M");
-			execLoadElement();
-			initalLoginFunc();
-			selectCurrentPageItem();
-			movePage(0);
-			
 		}
+	});
+
+}
+
+function postLoadElementFunc() {
+	readTextFile("S");
+	readTextFile("M");
+	execLoadElement();
+	
+	selectCurrentPageItem();
+	movePage(0);
+}
+
+function preLoadElementFunc() {
+	initalLoginFunc();
+}
+
+
+$(document).ready(
+	function(){
+		preLoadElementFunc();
+	}
 );
 

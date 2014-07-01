@@ -18,6 +18,14 @@ mysql.exe -h localhost --auto-rehash -p -u root
 ```
 CREATE DATABASE metroexam_db;
 USE metroexam_db;
+alter database metroexam_db default character set utf8 COLLATE utf8_general_ci;
+select default_character_set_name from information_schema.SCHEMATA S where schema_name = 'metroexam_db';
+
+SHOW VARIABLES LIKE 'collation_%';
+SHOW VARIABLES LIKE 'character%';
+SHOW CHARACTER SET;
+
+SHOW VARIABLES LIKE 'max_connections';
 ```
 
 ```
@@ -33,9 +41,9 @@ create table employee_tbl(
 
 insert into employee_tbl values('310115198701014321','56789','zhangjy','4001','line 4','add_desc','Y');
 
--- clear all data in the table
+--clear all data in the table
 truncate table employee_tbl;
--- check employee information
+--check employee information
 select * from employee_tbl;
 
 create table exam_score_record_tbl(
