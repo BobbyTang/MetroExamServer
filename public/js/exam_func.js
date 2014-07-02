@@ -446,7 +446,7 @@ function toggleButtonFunc(sign_status) {
 	if(sign_status == 'signin'){
 	  $("#loginButton").hide();
 	  $("#logoutButton").show();
-	  $("#previousPage").show();
+	  $("#previousPage").hide();
 	  $("#nextPage").show();
 	  $("#subSurveyAnswer").show();
 	}else if(sign_status == 'signout'){
