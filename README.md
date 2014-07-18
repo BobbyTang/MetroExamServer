@@ -67,6 +67,8 @@ select b.employeename, b.groupid, a.score, a.attended_ts from exam_score_record_
 ```
 ##DB Tools
 ####SQLDeveloper
+http://www.oracle.com/technetwork/developer-tools/sql-developer/downloads/index.html
+
 The `Preferences -> Environment -> Encoding` in SQLDeveloper is set currently to UTF-8
 ####mysql-workbench-community
 
